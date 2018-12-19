@@ -37,7 +37,7 @@
 
     <bean id="greetingsProcessor" class="org.wildfly.camel.examples.cxf.jaxws.GreetingsProcessor" />
 
-    <camelContext id="cxfws-camel-context" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="cxfws-crypto-camel-context" xmlns="http://camel.apache.org/schema/spring">
         <!--
          This route defines a CXF producer endpoint which invokes a greeting web service.
 
@@ -46,7 +46,10 @@
         -->
         <route id="directToCxfBeanRoute">
             <from id="directConsumer" uri="direct:start" />
-            <log id="logDirectInput" message="Received direct message: ${body}" loggingLevel="INFO"/>
+            <log id="logDirectInput" message="Received direct message: ${headers} ${body}" loggingLevel="INFO"/>
+            <log id="logEncrypting"
+                 message="Encrypting the message payload with PGP before sending CXF Consumer..."
+                 loggingLevel="INFO"/>
             <to id="cxfwsProducer" uri="cxf:bean:cxfProducer" />
         </route>
 
@@ -57,7 +60,10 @@
         -->
         <route id="cxfConsumerToProcessorRoute">
             <from id="cxfConsumer" uri="cxf:bean:cxfConsumer" />
-            <log id="logCxfInput" message="Received CXF Bean message: ${body}" loggingLevel="INFO"/>
+            <log id="logCxfInput" message="Received CXF Bean message: ${headers} ${body}" loggingLevel="INFO"/>
+            <log id="logDecrypting"
+                 message="Verifying the message payload PGP signature before processing..."
+                 loggingLevel="INFO"/>
             <process id="processor" ref="greetingsProcessor" />
         </route>
     </camelContext>

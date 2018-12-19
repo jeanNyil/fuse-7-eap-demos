@@ -54,7 +54,7 @@ set the application security domain, security roles and constraints.
 
 5. Build and deploy the project `mvn install -Pdeploy`
 
-6. Browse to http://localhost:8080/example-camel-cxf-jaxws-secure/
+6. Browse to http://_<jboss\_eap\_host>_:8080/example-camel-cxf-jaxws-secure/
 
 You should see a page titled 'Send A Greeting'. This UI enables us to interact with the test 'greeting' web service which will have also been started.
 
@@ -64,7 +64,7 @@ Testing Camel Secure CXF JAX-WS
 Web UI
 ------
 
-Browse to http://localhost:8080/example-camel-cxf-jaxws-secure/.
+Browse to http://_<jboss\_eap\_host>_:8080/example-camel-cxf-jaxws-secure/.
 
 From the 'Send A Greeting' web form, enter a 'message' and 'name' into the text fields and press the 'send' button. You'll then see the information you entered combined to display a greeting on the UI.
 
@@ -75,7 +75,7 @@ The full Camel route can be seen in `src/main/webapp/WEB-INF/cxfws-security-came
 SOAP-UI
 -------
 
-The service WSDL is available at http://localhost:8080/webservices/greeting-security-basic?wsdl.
+The service WSDL is available at http://_<jboss\_eap\_host>_:8080/webservices/greeting-security-basic?wsdl.
 
 There is a single service operation named 'greet' which takes 2 String parameters named 'message' and 'name'. Invoking the web service will return a response where these values have been concatenated together.
 

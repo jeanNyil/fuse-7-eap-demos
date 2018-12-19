@@ -1,5 +1,5 @@
-Camel CXF JAX-WS Example
-------------------------
+Camel CXF JAX-WS and CRYPTO Example
+-----------------------------------
 
 This example demonstrates using the camel-cxf component with Red Hat Fuse on EAP to produce and consume JAX-WS web services.
 
@@ -28,9 +28,9 @@ To run the example.
 
 2. Build and deploy the project `mvn install -Pdeploy`
 
-3. Browse to http://localhost:8080/example-camel-cxf-jaxws/
+3. Browse to http://_<jboss\_eap\_host>_:8080/example-camel-cxf-jaxws-crypto/
 
-You should see a page titled 'Send A Greeting'. This UI enables us to interact with the test 'greeting' web service which will have also been started. The service WSDL is available at http://localhost:8080/webservices/greeting?wsdl.
+You should see a page titled 'Send A Greeting'. This UI enables us to interact with the test 'greeting' web service which will have also been started. The service WSDL is available at http://_<jboss\_eap\_host>_:8080/webservices/greeting?wsdl.
 
 There is a single service operation named 'greet' which takes 2 String parameters named 'message' and 'name'. Invoking the web service will return a response where these values have been concatenated together.
 
@@ -40,7 +40,7 @@ Testing Camel CXF JAX-WS
 Web UI
 ------
 
-Browse to http://localhost:8080/example-camel-cxf-jaxws/.
+Browse to http://_<jboss\_eap\_host>_:8080/example-camel-cxf-jaxws-crypto/.
 
 From the 'Send A Greeting' web form, enter a 'message' and 'name' into the text fields and press the 'send' button. You'll then see the information you entered combined to display a greeting on the UI.
 
@@ -51,7 +51,9 @@ The full Camel route can be seen in `src/main/webapp/WEB-INF/cxfws-camel-context
 SOAP-UI
 -------
 
-The service WSDL is available at http://localhost:8080/webservices/greeting-security-basic?wsdl.
+The service WSDL is available at http://_<jboss\_eap\_host>_:8080/webservices/greeting-security-basic?wsdl.
+
+There is a single service operation named 'greet' which takes 2 String parameters named 'message' and 'name'. Invoking the web service will return a response where these values have been concatenated together.
 
 ## Undeploy
 
@@ -78,39 +80,39 @@ to go to the Overview tab of the OpenShift console. In the 'Builds' section you 
 When the build has completed successfully, click Overview in the left-hand navigation pane to view the running pod for this application. You can test
 the application by clicking on application URL link displayed at the top right of the pod overview. For example:
 
-    http://s2i-fuse71-eap-camel-cxf-jaxws-redhat-fuse.192.168.42.51.nip.io
+    http://s2i-fuse71-eap-camel-cxf-jaxws-crypto-redhat-fuse.192.168.42.51.nip.io
 
 Note: You can find the correct host name with 'oc get route s2i-fuse71-eap-camel-cxf-jaxws'
 
 The application URL exposes a web UI which enables you to trigger a camel route which invokes a JAX-WS greetings service via a CXF consumer & producer. The
 WSDL is available at:
 
-    http://s2i-fuse71-eap-camel-cxf-jaxws-redhat-fuse.192.168.42.51.nip.io/webservices/greeting?wsdl
+    http://s2i-fuse71-eap-camel-cxf-jaxws-crypto-redhat-fuse.192.168.42.51.nip.io/webservices/greeting?wsdl
 
 Deploying from the command line
 -------------------------------
 
 You can deploy this quickstart example to OpenShift by triggering an S2I build by running the following:
 
-    oc new-app s2i-fuse71-eap-camel-cxf-jaxws
+    oc new-app s2i-fuse71-eap-camel-cxf-jaxws-crypto
 
 You can follow progress of the S2I build by running:
 
-    oc logs -f bc/s2i-fuse71-eap-camel-cxf-jaxws
+    oc logs -f bc/s2i-fuse71-eap-camel-cxf-jaxws-crypto
 
 When the S2I build is complete and the application is running you can test by navigating to route endpoint. You can find the application route
 hostname via 'oc get route s2i-fuse71-eap-camel-cxf-jaxws'. For example:
 
-    http://s2i-fuse71-eap-camel-cxf-jaxws-redhat-fuse.192.168.42.51.nip.io
+    http://s2i-fuse71-eap-camel-cxf-jaxws-crypto-redhat-fuse.192.168.42.51.nip.io
 
 The application URL exposes a web UI which enables you to trigger a camel route which invokes a JAX-RS greetings service via a CXF consumer & producer. The
 WSDL is available at:
 
-    http://s2i-fuse71-eap-camel-cxf-jaxws-redhat-fuse.192.168.42.51.nip.io/webservices/greeting?wsdl
+    http://s2i-fuse71-eap-camel-cxf-jaxws-crypto-redhat-fuse.192.168.42.51.nip.io/webservices/greeting?wsdl
 
 Cleaning up
 -------------------------------
 
 You can delete all resources created by the quickstart application by running:
 
-    oc delete all -l 's2i-fuse71-eap-camel-cxf-jaxws'
+    oc delete all -l 's2i-fuse71-eap-camel-cxf-jaxws-crypto'

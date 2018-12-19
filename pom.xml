@@ -247,7 +247,7 @@
 
     <!-- Modules -->
     <modules>
-        <module>camel-cxf-jaxws</module>
+        <module>camel-cxf-jaxws-crypto</module>
         <module>camel-cxf-jaxws-secure</module>
     </modules>
 

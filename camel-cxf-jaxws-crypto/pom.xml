@@ -29,7 +29,7 @@
 
     <name>Wildfly Camel :: Example :: Camel CXF JAX-WS</name>
 
-    <artifactId>example-camel-cxf-jaxws</artifactId>
+    <artifactId>example-camel-cxf-jaxws-crypto</artifactId>
     <packaging>war</packaging>
 
     <dependencies>
@@ -49,6 +49,11 @@
             <groupId>org.jboss.spec.javax.servlet</groupId>
             <artifactId>jboss-servlet-api_3.1_spec</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <!-- For Camel PGP Dataformat -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-crypto</artifactId>
         </dependency>
     </dependencies>
 
