@@ -58,12 +58,6 @@ set the application security domain, security roles and constraints.
 
 You should see a page titled 'Send A Greeting'. This UI enables us to interact with the test 'greeting' web service which will have also been started.
 
-The service WSDL is available at http://localhost:8080/webservices/greeting-security-basic?wsdl.
-
-Thus, you may also use a tool like [_SOAP-UI_](https://www.soapui.org/) to test it directly.
-
-There is a single service operation named 'greet' which takes 2 String parameters named 'message' and 'name'. Invoking the web service will return a response where these values have been concatenated together.
-
 Testing Camel Secure CXF JAX-WS
 -------------------------------
 
@@ -77,6 +71,16 @@ From the 'Send A Greeting' web form, enter a 'message' and 'name' into the text 
 `CamelCxfWsServlet` handles the POST request from the web UI. It retrieves the message and name form parameter values and constructs an object array. This object array will be the message payload that is sent to the `direct:start` endpoint. A `ProducerTemplate` sends the message payload to Camel. `The direct:start` endpoint passes the object array to a `cxf:bean` web service producer. The web service response is used by `CamelCxfWsServlet` to display the greeting on the web UI.
 
 The full Camel route can be seen in `src/main/webapp/WEB-INF/cxfws-security-camel-context.xml`.
+
+SOAP-UI
+-------
+
+The service WSDL is available at http://localhost:8080/webservices/greeting-security-basic?wsdl.
+
+There is a single service operation named 'greet' which takes 2 String parameters named 'message' and 'name'. Invoking the web service will return a response where these values have been concatenated together.
+
+![Rejected request without basic auth](images/soapUIwithoutBasicAuth_KO.png)
+![Request with basic auth](images/soapUIwithBasicAuth_OK.png)
 
 ## Undeploy
 
