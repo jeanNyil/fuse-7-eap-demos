@@ -10,13 +10,13 @@ Their aim is to provide small, specific and working examples that can be used fo
 ### :raised_hands: NOTE :raised_hands:
 All the examples are based on the [_The WildFly-Camel Examples_](https://github.com/wildfly-extras/wildfly-camel-examples.git).
 
+### :warning: ATTENTION
+
+You have to adapt the `wildfly-maven-plugin according to your _JBoss EAP_ environment
+
 ### Prerequisites
 
 The examples require a running application server with Red Hat Fuse on EAP installed. Refer to the Red Hat Fuse on EAP installation documentation for how to do this.
-
-### :warning: ATTENTION :warning:
-
-You have to adapt the `wildfly-maven-plugin according to your _JBoss EAP_ environment
 
 ### Running Examples
 
