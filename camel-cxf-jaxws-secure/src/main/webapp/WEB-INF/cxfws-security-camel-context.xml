@@ -32,6 +32,22 @@
         address="http://{{sys:jboss.bind.address:localhost}}:8080/webservices/greeting-security-basic"
         serviceClass="org.wildfly.camel.examples.cxf.jaxws.GreetingService"
         loggingFeatureEnabled="true">
+        <!-- Comment below element to use non-WS-SecPol CXF interceptor method -->
+        <!-- cxf:properties>
+            <entry key="ws-security.callback-handler">
+                <ref bean="myPasswordCallback"/>
+            </entry>
+            <entry key="ws-security.encryption.properties" value="serviceKeystore.properties"/>
+            <entry key="ws-security.signature.properties" value="serviceKeystore.properties"/>
+        </cxf:properties> -->
+        <!-- Uncomment below interceptors to use CXF interceptor method -->
+        <cxf:outInterceptors>
+            <ref bean="signEncrypt_Response"/>
+        </cxf:outInterceptors>
+        <cxf:inInterceptors>
+            <ref bean="signEncrypt_Request"/>
+            <bean class="org.apache.cxf.ws.security.wss4j.DefaultCryptoCoverageChecker"/>
+        </cxf:inInterceptors>
     </cxf:cxfEndpoint>
 
     <!-- If available, we use jboss.bind.address instead of localhost -->
@@ -58,6 +74,55 @@
             </map>
         </property>
         <property name="globalRoles" value="adminRole testRole"/>
+    </bean>
+
+    <bean id="myPasswordCallback"
+          class="org.wildfly.camel.examples.cxf.jaxws.ServiceKeystorePasswordCallback" />
+
+    <!--
+        This bean is needed only if you're using the CXF interceptor method (per above
+        configuration, it's ignored if you're using the WS-SecurityPolicy method.)
+
+        WSS4JInInterceptor for decrypting and validating the signature of the
+        SOAP request.
+    -->
+    <bean id="signEncrypt_Request"
+          class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+        <constructor-arg>
+            <map>
+                <entry key="action" value="Signature Encrypt"/>
+                <entry key="signaturePropFile" value="serviceKeystore.properties"/>
+                <entry key="decryptionPropFile" value="serviceKeystore.properties"/>
+                <entry key="passwordCallbackClass" value="org.wildfly.camel.examples.cxf.jaxws.ServiceKeystorePasswordCallback"/>
+                <entry key="encryptionKeyTransportAlgorithm" value="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
+                <entry key="signatureAlgorithm" value="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <!--
+        This bean is needed only if you're using the CXF interceptor method (per above
+        configuration, it's ignored if you're using the WS-SecurityPolicy method.)
+
+        WSS4JOutInterceptor for encoding and signing the SOAP response.
+    -->
+    <bean id="signEncrypt_Response"
+          class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
+        <constructor-arg>
+            <map>
+                <entry key="action" value="Signature Encrypt"/>
+                <entry key="user" value="privatekey"/>
+                <entry key="signaturePropFile" value="serviceKeystore.properties"/>
+                <entry key="encryptionPropFile" value="serviceKeystore.properties"/>
+                <entry key="encryptionUser" value="privatekey"/>
+                <entry key="passwordCallbackClass" value="org.wildfly.camel.examples.cxf.jaxws.ServiceKeystorePasswordCallback"/>
+                <entry key="signatureParts" value="{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
+                <entry key="encryptionParts" value="{Element}{http://www.w3.org/2000/09/xmldsig#}Signature;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
+                <entry key="encryptionSymAlgorithm" value="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                <entry key="encryptionKeyTransportAlgorithm" value="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
+                <entry key="signatureAlgorithm" value="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            </map>
+        </constructor-arg>
     </bean>
 
     <bean class="org.wildfly.camel.examples.cxf.jaxws.GreetingsProcessor" id="greetingsProcessor"/>

@@ -8,6 +8,9 @@ In this example, a Camel route takes a message payload from a direct endpoint an
 endpoint. The producer uses the payload to pass arguments to a CXF JAX-WS web service that is secured by BASIC HTTP
 authentication.
 
+Moreover, all the exchanged SOAP messages are secured and encrypted according to the X509 signature and encryption
+WS-security policy
+
 Prerequisites
 -------------
 
@@ -80,7 +83,8 @@ The service WSDL is available at http://_<jboss\_eap\_host>_:8080/webservices/gr
 There is a single service operation named 'greet' which takes 2 String parameters named 'message' and 'name'. Invoking the web service will return a response where these values have been concatenated together.
 
 ![Rejected request without basic auth](images/soapUIwithoutBasicAuth_KO.png)
-![Request with basic auth](images/soapUIwithBasicAuth_OK.png)
+![Rejected request with basic auth but no X509 signature/encryption](images/soapUIwithBasicAuthAndNoX509Sign_KO.png)
+
 
 ## Undeploy
 

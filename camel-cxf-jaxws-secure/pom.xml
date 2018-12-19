@@ -50,6 +50,11 @@
             <artifactId>jboss-servlet-api_3.1_spec</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- For org.apache.wss4j.common.ext.WSPasswordCallback -->
+        <dependency>
+            <groupId>org.apache.wss4j</groupId>
+            <artifactId>wss4j-ws-security-common</artifactId>
+        </dependency>
     </dependencies>
 
     <!-- Build -->
