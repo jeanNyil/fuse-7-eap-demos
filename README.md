@@ -1,6 +1,6 @@
 ## Red Hat Fuse on EAP Examples
 
-This directory contains a suite of useful modules to demonstrate various features of the Red Hat Fuse on EAP.
+This directory contains a suite of useful modules to demonstrate various features of _Red Hat Fuse 7 on EAP_.
 Their aim is to provide small, specific and working examples that can be used for reference in your own projects.
 * [camel-cxf-jaxws-crypto](camel-cxf-jaxws-crypto)
 * [camel-cxf-jaxws-secure](camel-cxf-jaxws-secure)
