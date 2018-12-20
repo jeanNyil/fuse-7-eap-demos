@@ -32,7 +32,7 @@
         address="http://{{sys:jboss.bind.address:localhost}}:8080/webservices/greeting-security-basic"
         serviceClass="org.wildfly.camel.examples.cxf.jaxws.GreetingService"
         loggingFeatureEnabled="true">
-        <!-- Comment below element to use non-WS-SecPol CXF interceptor method -->
+        <!-- Uncomment below element to use non-WS-SecPol CXF interceptor method -->
         <!-- cxf:properties>
             <entry key="ws-security.callback-handler">
                 <ref bean="myPasswordCallback"/>
@@ -40,12 +40,12 @@
             <entry key="ws-security.encryption.properties" value="serviceKeystore.properties"/>
             <entry key="ws-security.signature.properties" value="serviceKeystore.properties"/>
         </cxf:properties> -->
-        <!-- Uncomment below interceptors to use CXF interceptor method -->
+        <!-- Comment below interceptors to use CXF interceptor method -->
         <cxf:outInterceptors>
-            <ref bean="signEncrypt_Response"/>
+            <ref bean="service_SignEncrypt_Response"/>
         </cxf:outInterceptors>
         <cxf:inInterceptors>
-            <ref bean="signEncrypt_Request"/>
+            <ref bean="service_VerifSignatureAndDecrypt_Request"/>
             <bean class="org.apache.cxf.ws.security.wss4j.DefaultCryptoCoverageChecker"/>
         </cxf:inInterceptors>
     </cxf:cxfEndpoint>
@@ -59,7 +59,20 @@
         <cxf:properties>
             <entry key="username" value="testUser"/>
             <entry key="password" value="testPassword1+"/>
+            <!-- Uncomment below element to use non-WS-SecPol CXF interceptor method -->
+            <!-- entry key="ws-security.callback-handler" value="org.wildfly.camel.examples.cxf.jaxws.ClientKeystorePasswordCallback"/>
+            <entry key="ws-security.encryption.properties" value="clientKeystore.properties"/>
+            <entry key="ws-security.signature.properties" value="clientKeystore.properties"/>
+            <entry key="ws-security.encryption.username" value="client-privatekey"/-->
         </cxf:properties>
+        <!-- Comment below interceptors to use CXF interceptor method -->
+        <cxf:inInterceptors>
+            <ref bean="client_VerifSignatureAndDecrypt_Response"/>
+            <bean class="org.apache.cxf.ws.security.wss4j.DefaultCryptoCoverageChecker"/>
+        </cxf:inInterceptors>
+        <cxf:outInterceptors>
+            <ref bean="client_SignEncrypt_Request"/>
+        </cxf:outInterceptors>
     </cxf:cxfEndpoint>
 
     <bean class="org.apache.cxf.interceptor.security.JAASLoginInterceptor" id="authenticationInterceptor">
@@ -86,7 +99,7 @@
         WSS4JInInterceptor for decrypting and validating the signature of the
         SOAP request.
     -->
-    <bean id="signEncrypt_Request"
+    <bean id="service_VerifSignatureAndDecrypt_Request"
           class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
         <constructor-arg>
             <map>
@@ -106,19 +119,66 @@
 
         WSS4JOutInterceptor for encoding and signing the SOAP response.
     -->
-    <bean id="signEncrypt_Response"
+    <bean id="service_SignEncrypt_Response"
           class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
         <constructor-arg>
             <map>
                 <entry key="action" value="Signature Encrypt"/>
-                <entry key="user" value="privatekey"/>
+                <entry key="user" value="service-privatekey"/>
                 <entry key="signaturePropFile" value="serviceKeystore.properties"/>
                 <entry key="encryptionPropFile" value="serviceKeystore.properties"/>
-                <entry key="encryptionUser" value="privatekey"/>
+                <entry key="encryptionUser" value="useReqSigCert"/>
                 <entry key="passwordCallbackClass" value="org.wildfly.camel.examples.cxf.jaxws.ServiceKeystorePasswordCallback"/>
                 <entry key="signatureParts" value="{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
                 <entry key="encryptionParts" value="{Element}{http://www.w3.org/2000/09/xmldsig#}Signature;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
                 <entry key="encryptionSymAlgorithm" value="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                <entry key="encryptionKeyTransportAlgorithm" value="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
+                <entry key="signatureAlgorithm" value="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <!--
+        This bean is needed only if you're using the CXF interceptor method (per above
+        configuration, it's ignored if you're using the WS-SecurityPolicy method.)
+
+        This bean is an Out interceptor which will add sign the body
+        and then encrypt the body.
+        It uses 3DES as the symmetric key algorithm.
+    -->
+    <bean class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor"
+          id="client_SignEncrypt_Request">
+        <constructor-arg>
+            <map>
+                <entry key="action" value="Signature Encrypt"/>
+                <entry key="user" value="client-privatekey"/>
+                <entry key="signaturePropFile" value="clientKeystore.properties"/>
+                <entry key="encryptionPropFile" value="clientKeystore.properties"/>
+                <entry key="encryptionUser" value="service-pubkey"/>
+                <entry key="passwordCallbackClass" value="org.wildfly.camel.examples.cxf.jaxws.ClientKeystorePasswordCallback"/>
+                <entry key="signatureParts" value="{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
+                <entry key="encryptionParts" value="{Element}{http://www.w3.org/2000/09/xmldsig#}Signature;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
+                <entry key="encryptionSymAlgorithm" value="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                <entry key="encryptionKeyTransportAlgorithm" value="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
+                <entry key="signatureAlgorithm" value="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <!--
+        This bean is needed only if you're using the CXF interceptor method (per above
+        configuration, it's ignored if you're using the WS-SecurityPolicy method.)
+
+        This bean is an In interceptor which will validate a signed and encrypted response.
+    -->
+    <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor"
+          id="client_VerifSignatureAndDecrypt_Response">
+        <constructor-arg>
+            <map>
+                <entry key="action" value="Signature Encrypt"/>
+                <entry key="signaturePropFile" value="clientKeystore.properties"/>
+                <entry key="decryptionPropFile" value="clientKeystore.properties"/>
+                <entry key="passwordCallbackClass" value="org.wildfly.camel.examples.cxf.jaxws.ClientKeystorePasswordCallback"/>
                 <entry key="encryptionKeyTransportAlgorithm" value="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
                 <entry key="signatureAlgorithm" value="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
             </map>
@@ -138,6 +198,7 @@
             <from id="directConsumer" uri="direct:start"/>
             <log id="logDirectInput" message="Received direct message: ${body}" loggingLevel="INFO"/>
             <to id="cxfwsProducer" uri="cxf:bean:cxfProducer"/>
+            <log id="logResponse" message="Received SOAP response message: ${body}" loggingLevel="INFO"/>
         </route>
 
         <!--

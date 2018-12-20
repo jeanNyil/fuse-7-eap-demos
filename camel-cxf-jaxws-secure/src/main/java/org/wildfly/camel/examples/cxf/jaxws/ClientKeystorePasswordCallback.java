@@ -10,13 +10,13 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.apache.wss4j.common.ext.WSPasswordCallback;
 
-public class ServiceKeystorePasswordCallback implements CallbackHandler {
+public class ClientKeystorePasswordCallback implements CallbackHandler {
 
     private Map<String, String> passwords =
             new HashMap<String, String>();
 
-    public ServiceKeystorePasswordCallback() {
-        passwords.put("service-privatekey", "changeit");
+    public ClientKeystorePasswordCallback() {
+        passwords.put("client-privatekey", "changeit");
     }
 
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
