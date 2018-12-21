@@ -12,7 +12,7 @@ All the examples are based on the [_The WildFly-Camel Examples_](https://github.
 
 ### :warning: ATTENTION
 
-You have to adapt the `wildfly-maven-plugin according to your _JBoss EAP_ environment
+You have to adapt the `wildfly-maven-plugin` according to your _JBoss EAP_ environment
 
 ### Prerequisites
 
