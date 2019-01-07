@@ -18,7 +18,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
        xsi:schemaLocation="
+        http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
@@ -34,6 +36,15 @@
                      address="http://{{sys:jboss.bind.address:localhost}}:8080/webservices/greeting"
                      serviceClass="org.wildfly.camel.examples.cxf.jaxws.GreetingService"
                      loggingFeatureEnabled="true"/>
+
+    <!-- CXF Producer client HTTP-Conduit configuration -->
+    <http-conf:conduit id="cxfproducer-client-httpconduit" name="*.http-conduit">
+        <!-- HTTP Client configuration -->
+        <http-conf:client AutoRedirect="true"
+                          Connection="Keep-Alive"
+                          ConnectionTimeout="30000"
+                          ReceiveTimeout="60000"/>
+    </http-conf:conduit>
 
     <bean id="greetingsProcessor" class="org.wildfly.camel.examples.cxf.jaxws.GreetingsProcessor" />
 

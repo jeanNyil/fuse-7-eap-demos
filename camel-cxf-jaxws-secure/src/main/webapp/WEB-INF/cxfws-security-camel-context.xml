@@ -21,10 +21,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans.xsd
-                           http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
-                           http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+       xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+       xsi:schemaLocation="
+         http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <!-- If available, we use jboss.bind.address instead of localhost -->
     <cxf:cxfEndpoint
@@ -74,6 +76,15 @@
             <ref bean="client_SignEncrypt_Request"/>
         </cxf:outInterceptors>
     </cxf:cxfEndpoint>
+
+    <!-- CXF Producer client HTTP-Conduit configuration -->
+    <http-conf:conduit id="cxfproducer-client-httpconduit" name="*.http-conduit">
+        <!-- HTTP Client configuration -->
+        <http-conf:client AutoRedirect="true"
+                          Connection="Keep-Alive"
+                          ConnectionTimeout="30000"
+                          ReceiveTimeout="60000"/>
+    </http-conf:conduit>
 
     <bean class="org.apache.cxf.interceptor.security.JAASLoginInterceptor" id="authenticationInterceptor">
         <property name="contextName" value="other"/>
@@ -190,7 +201,6 @@
     <camelContext id="cxfws-secure-camel-context" xmlns="http://camel.apache.org/schema/spring">
         <!--
              This route defines a CXF producer endpoint which invokes a greeting web service.
-
              CamelCxfWsServlet sends the required message and name parameters to the service by populating them
              within the message exchange body.
         -->
@@ -203,7 +213,6 @@
 
         <!--
             This route defines a CXF consumer endpoint which handles requests made to the greeting web service.
-
             GreetingsProcessor constructs a String greeting response to return back to the JAX-WS client.
         -->
         <route id="cxfConsumerToProcessorRoute">
