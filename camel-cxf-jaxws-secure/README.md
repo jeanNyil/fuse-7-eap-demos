@@ -23,23 +23,26 @@ Prerequisites
 * _Apache Maven 3.5+_
 * _Red Hat JBoss EAP 7.1_ server with _Red Hat Fuse 7.2_ installed
 * JKS keystores used to enforce the X509 signature and encryption WS-security policy on both the SOAP client and server:
-  * `src/main/resources/certs/client-ws-x509signature.jks`
-  * `src/main/resources/certs/service-ws-x509signature.jks`
-  * This is how these JKS keystores were generated:
+  * `src/main/resources/certs/client-ws-x509signature.ks`: keystore for the CXF Producer (_Web service client_. See [_*cxfws-security-camel-context.xml*_](src/main/webapp/WEB-INF/cxfws-security-camel-context.xml)). It contains the client private key.
+  * `src/main/resources/certs/client-ws-x509signature.ts`: truststore for the CXF Producer (_Web service client_. See [_*cxfws-security-camel-context.xml*_](src/main/webapp/WEB-INF/cxfws-security-camel-context.xml)). It contains the service public key.
+  * `src/main/resources/certs/service-ws-x509signature.ks`: keystore for the CXF Consumer (_Web service server_. See [_*cxfws-security-camel-context.xml*_](src/main/webapp/WEB-INF/cxfws-security-camel-context.xml)). It contains the service private key.
+  * `src/main/resources/certs/service-ws-x509signature.ts`: truststore for the CXF Consumer (_Web service server_. See [_*cxfws-security-camel-context.xml*_](src/main/webapp/WEB-INF/cxfws-security-camel-context.xml)). It contains the client public key.
+  * This is how the above JKS keystores were generated):
   ```
   # Generate auto-signed client key pair and a JKS keystore
-  keytool -genkeypair -keyalg RSA -keysize 4096 -validity 1825 -dname "CN=client-ws-x509signature" -alias client-privatekey -keystore client-ws-x509signature.jks
+  keytool -genkeypair -keyalg RSA -keysize 4096 -validity 1825 -dname "CN=client-ws-x509signature" -alias client-privatekey -keystore client-ws-x509signature.ks
   # Export the client public key
-  keytool -export -alias client-privatekey -file client-pubkey.crt -keystore client-ws-x509signature.jks
+  keytool -export -alias client-privatekey -file client-pubkey.crt -keystore client-ws-x509signature.ks
   # Generate auto-signed service key pair and a JKS keystore
-  keytool -genkeypair -keyalg RSA -keysize 4096 -validity 1825 -dname "CN=service-ws-x509signature" -alias service-privatekey -keystore service-ws-x509signature.jks
+  keytool -genkeypair -keyalg RSA -keysize 4096 -validity 1825 -dname "CN=service-ws-x509signature" -alias service-privatekey -keystore service-ws-x509signature.ks
   # Export the service public key
-  keytool -export -alias service-privatekey -file service-pubkey.crt -keystore service-ws-x509signature.jks
+  keytool -export -alias service-privatekey -file service-pubkey.crt -keystore service-ws-x509signature.ks
   # Import the client public key in the service JKS keystore
-  keytool -import -trustcacerts -file client-pubkey.crt -alias client-pubkey -keystore service-ws-x509signature.jks
+  keytool -import -trustcacerts -file client-pubkey.crt -alias client-pubkey -keystore service-ws-x509signature.ts
   # Import the service public key in the client JKS keystore
-  keytool -import -trustcacerts -file service-pubkey.crt -alias service-pubkey -keystore client-ws-x509signature.jks
+  keytool -import -trustcacerts -file service-pubkey.crt -alias service-pubkey -keystore client-ws-x509signature.ts
   ```
+    * the overall password used is : `changeit`
 
 Running the example
 -------------------
@@ -155,6 +158,11 @@ SOAP-UI
 The service WSDL is available at _http://*<jboss\_eap\_host>*:8080/webservices/greeting-security-basic?wsdl_.
 
 There is a single service operation named `greet` which takes 2 _String_ parameters named `message` and `name`. Invoking the web service will return a response where these values have been concatenated together.
+
+Make sure the following outgoing and incoming **WS-security configurations** are enforced:
+  * **Ecnryption Symmetric Encoding Algorithm**: `http://www.w3.org/2001/04/xmlenc#tripledes-cbc`
+  * **Ecnryption Key Encryption Algorithm**: `http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p`
+  * **Signature Algorithm**: `http://www.w3.org/2000/09/xmldsig#rsa-sha1`
 
 ![Rejected request without basic auth](../images/soapUIwithoutBasicAuth_KO.png)
 ![Rejected request with basic auth but no X509 signature/encryption](../images/soapUIwithBasicAuthAndNoX509Sign_KO.png)
