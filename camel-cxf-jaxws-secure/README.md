@@ -29,17 +29,17 @@ Prerequisites
   * `src/main/resources/certs/service-ws-x509signature.ts`: truststore for the CXF Consumer (_Web service server_. See [_*cxfws-security-camel-context.xml*_](src/main/webapp/WEB-INF/cxfws-security-camel-context.xml)). It contains the client public key.
   * This is how the above JKS keystores were generated):
   ```
-  # Generate auto-signed client key pair and a JKS keystore
+  # Generate an auto-signed key pair and a JKS keystore for the client 
   keytool -genkeypair -keyalg RSA -keysize 4096 -validity 1825 -dname "CN=client-ws-x509signature" -alias client-privatekey -keystore client-ws-x509signature.ks
   # Export the client public key
   keytool -export -alias client-privatekey -file client-pubkey.crt -keystore client-ws-x509signature.ks
-  # Generate auto-signed service key pair and a JKS keystore
+  # Generate an auto-signed key pair and a JKS keystore for the service
   keytool -genkeypair -keyalg RSA -keysize 4096 -validity 1825 -dname "CN=service-ws-x509signature" -alias service-privatekey -keystore service-ws-x509signature.ks
   # Export the service public key
   keytool -export -alias service-privatekey -file service-pubkey.crt -keystore service-ws-x509signature.ks
-  # Import the client public key in the service JKS keystore
+  # Import the client public key in the service truststore (JKS keystore)
   keytool -import -trustcacerts -file client-pubkey.crt -alias client-pubkey -keystore service-ws-x509signature.ts
-  # Import the service public key in the client JKS keystore
+  # Import the service public key in the client truststore (JKS keystore)
   keytool -import -trustcacerts -file service-pubkey.crt -alias service-pubkey -keystore client-ws-x509signature.ts
   ```
     * the overall password used is : `changeit`
