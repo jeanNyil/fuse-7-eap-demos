@@ -169,11 +169,11 @@ Make sure the following outgoing and incoming **WS-Security configurations** are
     ![SOAP-UI 3.5.4 Incoming WS-Security Configuration](../images/soapuiIncomingWSSecurityConf.png)
 
 Below are some sample tests screenshots:
-  * Rejected request without any basic authentication:
+  * _Rejected request without any basic authentication_:
   ![Rejected request without basic auth](../images/soapUIwithoutBasicAuth_KO.png)
-  * Rejected request with basic authentication but without any WS-Security policy enforced:
+  * _Rejected request with basic authentication but without any WS-Security policy enforced_:
   ![Rejected request with basic auth but no X509 signature/encryption](../images/soapUIwithBasicAuthAndNoX509Sign_KO.png)
-  * Accepted request with basic authentication and x509 signature + encryption WS-Security policy enforced:
+  * _Accepted request with basic authentication and x509 signature + encryption WS-Security policy enforced_:
   ![Accepted request with basic auth and X509 signature&encryption](../images/soapUIwithBasicAuthAndX509Sign&Encrypt_OK.png)
 
 _Red Hat JBoss EAP 7.1.5_ log extracts to show the X509 signed and encrypted SOAP envelopes:
